@@ -7,6 +7,27 @@ const { sequelize } = require('./config/db');
 
 const app = express();
 
+const engine = mustacheExpress()
+app.engine("mustache", engine)
+
+app.set("views", path.join(__dirname, "templates"))
+app.set("view engine", "mustache")
+
+app.get("/home", (req, res) => {
+  query = []
+  keys = Object.keys(req.query)
+  for (let i = 0; i < keys.length; i++) {
+    query.push({key: keys[i], value: req.query[keys[i]]})
+  }
+
+  args = {
+    'titulo': "Ola Mundo dos Templates",
+    'descricao': "Texto aleatório para ilustrar o caso!",
+    'params': query
+  }
+  res.render("home", args)
+})
+
 app.use(express.json());
 
 // Rotas principais

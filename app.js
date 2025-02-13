@@ -7,7 +7,7 @@ const path = require('path');
 const logger = require('morgan');
 const session = require("express-session")
 const Sequelize = require("sequelize")
-const mustacheExpress = require('mustache-express');
+//const mustacheExpress = require('mustache-express');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -15,9 +15,9 @@ const usersRouter = require('./routes/users');
 const app = express();
 
 // Configurar o motor de visualização Mustache
-app.engine('mustache', mustacheExpress());
-app.set('view engine', 'mustache');
-app.set('views', './views');
+// app.engine('mustache', mustacheExpress());
+// app.set('view engine', 'mustache');
+// app.set('views', './views');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
