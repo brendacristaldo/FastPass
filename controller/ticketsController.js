@@ -109,8 +109,33 @@ const registerTicket = async (req, res) => {
 };
 
 const buyTicket = async (req, res) => {
+    const { ticketId, quantity } = req.body;
+    const userId = req.user.id;
 
-}
+    try {
+        const stock = await TicketStock.findOne({
+            where: { ticketId }
+        });
+
+        if (!stock || stock.quantity < quantity) {
+            return res.status(400).json({ message: 'Estoque insuficiente' });
+        }
+
+        const userTicket = await UserTicket.create({
+            userId,
+            ticketId,
+            quantity,
+            status: 'completed'
+        });
+
+        stock.quantity -= quantity;
+        await stock.save();
+
+        res.status(200).json(userTicket);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao comprar ingresso' });
+    }
+};
 
 // Função para atualizar informações de um ticket
 const updateTicket = async (req, res) => {
