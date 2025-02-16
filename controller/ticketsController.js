@@ -1,6 +1,6 @@
-const Ticket = require('../models/Ticket');
-const TicketStock = require('../models/TicketStock');
-const UserTicket = require('../models/UserTickets');
+const Ticket = require('../models/ticketModel');
+const TicketStock = require('../models/ticketStockModel');
+const UserTicket = require('../models/userTicketModel');
 
 // Função para retornar todos os tickets com paginação
 const getTickets = async (req, res) => {

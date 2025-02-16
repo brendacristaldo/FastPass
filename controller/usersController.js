@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
-const User = require('../models/User')
-const Ticket = require('../models/Ticket')
-const TicketStock = require('../models/TicketStock')
+const User = require('../models/userModel')
+const Ticket = require('../models/ticketModel')
+const TicketStock = require('../models/ticketStockModel')
 
 //Função que retorna todos os usuários salvos no vetor users do database
 const getUsers = async (req, res) => {

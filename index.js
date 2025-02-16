@@ -1,9 +1,11 @@
-//require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
-const { urlNotValid } = require('./middlewares/auth.js');
-const usersRoutes = require('./routes/usersRoutes');
-const ticketsRoutes = require('./routes/ticketsRoutes');
+const { urlNotValid } = require('./middleware/auth.js');
+const usersRoutes = require('./routes/userRoutes');
+const ticketsRoutes = require('./routes/ticketRoutes');
 const { sequelize } = require('./config/db');
+const mustacheExpress = require('mustache-express');
+const path = require('path');
 
 const app = express();
 

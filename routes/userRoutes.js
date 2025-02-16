@@ -1,13 +1,13 @@
 const express = require('express')
 
 //Chamada de funções do usersController
-const usersControler = require('../controllers/usersController')
+const usersControler = require('../controller/usersController')
 
 //Importação dos middlewares de autenticação
 //VerifyToken é usado para verificar o Token de Login
 //isAdm analisa se o token do usuário logado tem permissão ou não de administrador
 //userisAdmOrHimself permite ações apenas para o próprio usuário ou administradores.
-const {verifyToken, isAdm, userIsAdmOrHimself} = require('../middlewares/auth.js')
+const {verifyToken, isAdm, userIsAdmOrHimself} = require('../middleware/auth.js')
 const router = express.Router()
 
 //Rota get do requisito para gerar um usuário administrador para utilizar no sistema
