@@ -167,22 +167,18 @@ const updateTicket = async (req, res) => {
 
 // Função para deletar um ticket
 const deleteTicket = async (req, res) => {
-    const ticketId = parseInt(req.params.id);
+    const { id } = req.params;
 
     try {
-        const ticket = await Ticket.findByPk(ticketId);
-
+        const ticket = await Ticket.findByPk(id);
         if (!ticket) {
-            return res.status(404).json({ message: 'Ticket não encontrado.' });
+            return res.status(404).json({ message: 'Ticket não encontrado' });
         }
 
         await ticket.destroy();
-
-        res.status(200).json(ticket);
-    } 
-    
-    catch (error) {
-        res.status(500).json({ message: 'Erro ao deletar o ticket' });
+        res.status(200).json({ message: 'Ticket excluído com sucesso' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao excluir ticket', error });
     }
 };
 

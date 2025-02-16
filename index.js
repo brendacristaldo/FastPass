@@ -79,25 +79,25 @@ app.get("/", (req, res) => {
 
 // Rota para o histórico de compras
 app.get('/purchase-history', verifyToken, (req, res) => {
-    // Verifique se o usuário está autenticado
-    if (!req.cookies.token) {
-        return res.redirect('/users/login');
-    }
+  // Verifique se o usuário está autenticado
+  if (!req.cookies.token) {
+      return res.redirect('/users/login');
+  }
 
-    // Busque os dados do usuário e seus ingressos
-    const tickets = [
-        {
-            id: 1,
-            ticket: { name: 'Ingresso Meia', type: 'Meia' },
-            quantity: 2,
-            purchaseDate: new Date(),
-            status: 'active'
-        },
-        // Adicione mais ingressos conforme necessário
-    ];
+  // Busque os dados do usuário e seus ingressos
+  const tickets = [
+      {
+          id: 1,
+          ticket: { name: 'Ingresso Meia', type: 'Meia' },
+          quantity: 2,
+          purchaseDate: new Date(),
+          status: 'active'
+      },
+      // Adicione mais ingressos conforme necessário
+  ];
 
-    // Renderize a view com os dados
-    res.render('purchase-history', { tickets });
+  // Renderize a view com os dados
+  res.render('purchase-history', { tickets });
 });
 
 // Rotas da API
