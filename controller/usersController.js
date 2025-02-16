@@ -72,7 +72,7 @@ const createUser = async (req, res) => {
     const { name, email, username, password } = req.body;
 
     if (!name || !email || !username || !password) {
-        return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
+        return res.render('register', { errors: ['Todos os campos são obrigatórios'] });
     }
 
     try {
@@ -84,15 +84,13 @@ const createUser = async (req, res) => {
             isAdm: false
         });
 
-        res.status(201).json(userCreated);
-    } 
-    
-    catch (error) {
-        res.status(500).json({ message: "Erro ao criar usuário", error });
+        // Redireciona para a página de login após o cadastro
+        res.redirect('/purchase-history');
+    } catch (error) {
+        // Exibe erros na view de cadastro
+        res.render('register', { errors: ['Erro ao criar usuário. Tente novamente.'] });
     }
 };
-
-
 
 //Função para criar administrador
 const createUserAdm = async (req, res) => {

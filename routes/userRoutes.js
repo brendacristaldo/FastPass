@@ -9,7 +9,12 @@ router.get('/install', usersControler.installSystem);
 // Rota para listar usuários
 router.get('/', usersControler.getUsers);
 
-// Rota para registro de usuário comum
+// Rota para exibir a página de cadastro
+router.get('/register', (req, res) => {
+    res.render('register', { errors: [] }); // Passa um array vazio de erros
+});
+
+// Rota para processar o cadastro de usuário
 router.post('/registerUser', usersControler.createUser);
 
 // Rota para registro de administrador (apenas admins)

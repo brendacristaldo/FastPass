@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { urlNotValid } = require('./middleware/auth.js');
+const { urlNotValid, verifyToken } = require('./middleware/auth.js');
 const usersRoutes = require('./routes/userRoutes');
 const ticketsRoutes = require('./routes/ticketRoutes');
 const mustacheExpress = require('mustache-express');
@@ -10,8 +10,6 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./config/swagger-output.json');
-
-
 const app = express();
 
 // Configuração do Mustache
@@ -76,9 +74,31 @@ app.get("/", (req, res) => {
     if (!req.session.user) {
         return res.redirect('/users/login');
     }
-    res.redirect('/tickets');
+    res.redirect('views/ticket-view');
 });
 
+// Rota para o histórico de compras
+app.get('/purchase-history', verifyToken, (req, res) => {
+    // Verifique se o usuário está autenticado
+    if (!req.cookies.token) {
+        return res.redirect('/users/login');
+    }
+
+    // Busque os dados do usuário e seus ingressos
+    const tickets = [
+        {
+            id: 1,
+            ticket: { name: 'Ingresso Meia', type: 'Meia' },
+            quantity: 2,
+            purchaseDate: new Date(),
+            status: 'active'
+        },
+        // Adicione mais ingressos conforme necessário
+    ];
+
+    // Renderize a view com os dados
+    res.render('purchase-history', { tickets });
+});
 
 // Rotas da API
 app.use('/users', usersRoutes);
@@ -94,6 +114,5 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
-
 
 module.exports = app;
