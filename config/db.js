@@ -37,4 +37,4 @@ const syncDatabase = async () => {
 authenticateDatabase();
 syncDatabase();
 
-module.exports = { sequelize }; // Export as an object
+module.exports = { sequelize }; 

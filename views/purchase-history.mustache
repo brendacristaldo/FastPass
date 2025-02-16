@@ -1,0 +1,68 @@
+<html>
+<head>
+    <title>Histórico de Compras</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a href="/tickets" class="text-xl font-semibold">Sistema de Ingressos</a>
+                <div class="space-x-4">
+                    <a href="/tickets" class="text-gray-600 hover:text-gray-900">Comprar Ingressos</a>
+                    <a href="/users/logout" class="text-gray-600 hover:text-gray-900">Sair</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-6">Meus Ingressos</h1>
+        
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {{#tickets}}
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-2">{{ticket.name}}</h2>
+                <p class="text-gray-600 mb-2">Tipo: {{ticket.type}}</p>
+                <p class="text-gray-600 mb-2">Quantidade: {{quantity}}</p>
+                <p class="text-gray-600 mb-2">Data da Compra: {{formatDate purchaseDate}}</p>
+                <p class="text-gray-600 mb-4">
+                    Status: 
+                    <span class="{{#if status.active}}text-green-600{{/if}}
+                               {{#if status.completed}}text-gray-600{{/if}}
+                               {{#if status.cancelled}}text-red-600{{/if}}">
+                        {{status}}
+                    </span>
+                </p>
+                
+                <div class="space-y-2">
+                    <a href="/tickets/view/{{id}}" 
+                       class="block text-center bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600">
+                        Ver Detalhes
+                    </a>
+                    
+                    {{#if status.active}}
+                    <form action="/tickets/{{id}}/cancel" method="POST">
+                        <button type="submit" 
+                                class="w-full bg-red-500 text-white rounded-md py-2 hover:bg-red-600">
+                            Cancelar Ingresso
+                        </button>
+                    </form>
+                    {{/if}}
+                </div>
+            </div>
+            {{/tickets}}
+            
+            {{^tickets}}
+            <div class="col-span-full text-center py-8">
+                <p class="text-gray-600 mb-4">Você ainda não possui ingressos.</p>
+                <a href="/tickets" 
+                   class="inline-block bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600">
+                    Comprar Ingressos
+                </a>
+            </div>
+            {{/tickets}}
+        </div>
+    </div>
+</body>
+</html>

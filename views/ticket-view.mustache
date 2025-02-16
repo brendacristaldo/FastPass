@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>Visualização do Ingresso</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a href="/tickets" class="text-xl font-semibold">Sistema de Ingressos</a>
+                <div class="space-x-4">
+                    <a href="/tickets" class="text-gray-600 hover:text-gray-900">Comprar Ingressos</a>
+                    <a href="/tickets/history" class="text-gray-600 hover:text-gray-900">Meus Ingressos</a>
+                    <a href="/users/logout" class="text-gray-600 hover:text-gray-900">Sair</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-2xl font-bold mb-6">Ingresso #{{ticket.id}}</h1>
+            
+            <div class="space-y-4">
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold mb-2">{{ticket.name}}</h2>
+                    <p class="text-gray-600">{{ticket.description}}</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="font-medium">Tipo</p>
+                        <p class="text-gray-600">{{ticket.type}}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Preço</p>
+                        <p class="text-gray-600">R$ {{formatPrice ticket.price}}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Quantidade</p>
+                        <p class="text-gray-600">{{quantity}}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Status</p>
+                        <p class="text-gray-600 {{#if status.active}}text-green-600{{/if}}
+                                              {{#if status.completed}}text-gray-600{{/if}}
+                                              {{#if status.cancelled}}text-red-600{{/if}}">
+                            {{status}}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Data da Compra</p>
+                        <p class="text-gray-600">{{formatDate purchaseDate}}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 space-x-4">
+                <a href="/tickets/history" 
+                   class="inline-block bg-gray-500 text-white rounded-md py-2 px-4 hover:bg-gray-600">
+                    Voltar ao Histórico
+                </a>
+                
+                {{#if status.active}}
+                <form action="/tickets/{{id}}/cancel" method="POST" class="inline-block">
+                    <button type="submit" 
+                            class="bg-red-500 text-white rounded-md py-2 px-4 hover:bg-red-600">
+                        Cancelar Ingresso
+                    </button>
+                </form>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

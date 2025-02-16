@@ -3,50 +3,97 @@ const express = require('express');
 const { urlNotValid } = require('./middleware/auth.js');
 const usersRoutes = require('./routes/userRoutes');
 const ticketsRoutes = require('./routes/ticketRoutes');
-const { sequelize } = require('./config/db');
 const mustacheExpress = require('mustache-express');
 const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./config/swagger-output.json');
+
 
 const app = express();
 
-const engine = mustacheExpress()
-app.engine("mustache", engine)
+// Configuração do Mustache
+const engine = mustacheExpress();
+app.engine("mustache", engine);
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "mustache");
 
-app.set("views", path.join(__dirname, "templates"))
-app.set("view engine", "mustache")
+// Helpers do Mustache
+app.locals.formatDate = (date) => {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+};
 
-app.get("/home", (req, res) => {
-  query = []
-  keys = Object.keys(req.query)
-  for (let i = 0; i < keys.length; i++) {
-    query.push({key: keys[i], value: req.query[keys[i]]})
-  }
+app.locals.formatPrice = (price) => {
+    if (!price) return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(price);
+};
 
-  args = {
-    'titulo': "Ola Mundo dos Templates",
-    'descricao': "Texto aleatório para ilustrar o caso!",
-    'params': query
-  }
-  res.render("home", args)
-})
+app.locals.getStatusClass = (status) => {
+    const classes = {
+        'active': 'text-green-600',
+        'completed': 'text-gray-600',
+        'cancelled': 'text-red-600'
+    };
+    return classes[status] || 'text-gray-600';
+};
 
+// Middlewares
+app.use(logger('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Rotas principais
+// Configuração da sessão
+app.use(session({
+    secret: process.env.SESSION_SECRET || "#@A4327Asdzw",
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Middleware para disponibilizar user na view
+app.use((req, res, next) => {
+    res.locals.user = req.session.user;
+    res.locals.isAuthenticated = !!req.session.user;
+    next();
+});
+
+// Configuração do Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+// Rota raiz redireciona para login se não autenticado
+app.get("/", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/users/login');
+    }
+    res.redirect('/tickets');
+});
+
+
+// Rotas da API
 app.use('/users', usersRoutes);
 app.use('/tickets', ticketsRoutes);
 
-// Middleware para rota não encontrada
+// Tratamento de erro para rota não encontrada
 app.use(urlNotValid);
 
-// Função assíncrona para criar as tabelas no MySQL caso elas não existam ao compilar o projeto
-(async () => {
-  try {
-    await sequelize.sync();
-    app.listen(4000, () => console.log("Servidor rodando na porta 4000"));
-  } 
-  
-  catch (error) {
-    console.error("Erro ao sincronizar o banco de dados:", error);
-  }
-})();
+// Tratamento de erros
+app.use(function(err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.status(err.status || 500);
+    res.render('error');
+});
+
+
+module.exports = app;

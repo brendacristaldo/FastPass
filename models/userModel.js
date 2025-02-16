@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
+const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
     id: {
@@ -14,7 +15,7 @@ const User = sequelize.define('User', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: true, // Índice único para email
         validate: {
             isEmail: true
         }
@@ -22,7 +23,7 @@ const User = sequelize.define('User', {
     username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true // Índice único para username
     },
     password: {
         type: DataTypes.STRING,
@@ -35,7 +36,17 @@ const User = sequelize.define('User', {
 }, 
 {
     tableName: 'users',
-    timestamps: false
+    timestamps: false,
+    hooks: {
+        beforeCreate: async (user) => {
+            user.password = await bcrypt.hash(user.password, 10);
+        }
+    },
+    methods: {
+        comparePassword: async function(password) {
+            return await bcrypt.compare(password, this.password);
+        }
+    }
 });
 
 module.exports = User;

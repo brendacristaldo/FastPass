@@ -126,21 +126,31 @@ const verifyUser = async (req, res) => {
 
     try {
         const userLogin = await User.findOne({
-            where: { username, password }
+            where: { username }
         });
 
         if (!userLogin) {
-            return res.status(401).json({ message: 'Usuário ou senha inválida, tente novamente' });
+            return res.render('login', { errors: ['Usuário ou senha inválida, tente novamente'] });
         }
 
-        const token = jwt.sign({ id: userLogin.id, isAdm: userLogin.isAdm }, process.env.JWT_SECRET, { expiresIn: '1 hr' });
-        res.cookie("token", token, { httpOnly: true });
+        const isValidPassword = await userLogin.comparePassword(password);
+        if (!isValidPassword) {
+            return res.render('login', { errors: ['Usuário ou senha inválida, tente novamente'] });
+        }
 
-        res.status(200).json({ message: 'Login bem-sucedido', token });
-    } 
-    
-    catch (error) {
-        res.status(500).json({ message: "Erro ao fazer login", error });
+        const token = jwt.sign({ id: userLogin.id, isAdm: userLogin.isAdm }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Configura o cookie com o token
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+
+        // Redireciona para a página de histórico de compras
+        res.redirect('/purchase-history');
+    } catch (error) {
+        res.render('login', { errors: ['Erro ao fazer login'] });
     }
 };
 

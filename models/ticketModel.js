@@ -11,6 +11,14 @@ const Ticket = sequelize.define('Ticket', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
     price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false

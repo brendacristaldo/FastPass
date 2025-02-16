@@ -20,17 +20,29 @@ const UserTicket = sequelize.define('UserTicket', {
         defaultValue: DataTypes.NOW
     },
     status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('pending', 'completed', 'cancelled'),
         allowNull: false,
         defaultValue: 'pending'
     }
 }, 
 {
     tableName: 'user_tickets',
-    timestamps: false
+    timestamps: false,
+    hooks: {
+        beforeUpdate: (userTicket, options) => {
+            // Impede cancelamento após conclusão
+            if (userTicket.changed('status') && 
+                userTicket.previous('status') === 'completed' && 
+                userTicket.status === 'cancelled') {
+                throw new Error('Não é possível cancelar uma compra já concluída');
+            }
+        }
+    }
 });
 
 UserTicket.belongsTo(User, { foreignKey: 'userId' });
 UserTicket.belongsTo(Ticket, { foreignKey: 'ticketId' });
+User.hasMany(UserTicket, { foreignKey: 'userId' });
+Ticket.hasMany(UserTicket, { foreignKey: 'ticketId' });
 
 module.exports = UserTicket;
