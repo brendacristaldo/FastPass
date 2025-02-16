@@ -13,36 +13,36 @@
   "paths": {
     "/install": {
       "get": {
-        "description": "",
+        "description": "Instala o sistema (cria admin inicial)",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Sistema instalado com sucesso"
           },
           "400": {
             "description": "Bad Request"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Erro ao instalar o sistema"
           }
         }
       }
     },
-    "/": {
+    "/users": {
       "get": {
-        "description": "",
+        "description": "Retorna todos os usuários",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Lista de usuários"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Erro ao buscar usuários"
           }
         }
       }
     },
-    "/registerUser": {
+    "/users/register": {
       "post": {
-        "description": "",
+        "description": "Cadastra um novo usuário",
         "parameters": [
           {
             "name": "body",
@@ -68,13 +68,13 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Usuário cadastrado com sucessod"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Campos obrigatórios faltando"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Erro ao cadastrar usuário"
           }
         }
       }
@@ -125,39 +125,6 @@
           },
           "404": {
             "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/login": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "username": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
